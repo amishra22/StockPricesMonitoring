@@ -3,6 +3,33 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>Stock Price Monitoring</title>
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    tr {
+        height:25px;
+        vertical-align: bottom;
+    }
+    th {
+        text-align: left;
+        height: 50px;
+    }
+    h1 {
+        color: blue;
+        font-family: verdana;
+        font-size: 300%;
+    }
+    p  {
+        color: red;
+        font-family: courier;
+        font-size: 160%;
+    }
+</style>
 </head>
 <script
         src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -10,10 +37,9 @@
         crossorigin="anonymous"></script>
 <script type="text/javascript">
     function start(){
-        var methodURL = "http://localhost:8181/addComp/sym_name";
+        $("#table_details").hide();
+        var methodURL = "addComp/sym_name";
         var temp = $("#sym_name").val();
-        console.log(temp);
-        console.log(JSON.stringify(temp));
         $.ajax({
            type : "POST",
            contentType : "application/json",
@@ -21,99 +47,164 @@
            data : JSON.stringify(temp),
            dataType : 'json',
            success : function() {
-            console.log("HI aa gaya");
-
+            console.log("Added");
            },
            error : function() {
-           console.log("Kuch error" );
-
+           console.log("Err...");
            }
         });
+        $("#sym_name").val("");
+        $("#table_details").hide();
     }
 
     function getHist(){
-        var methodURL = "http://localhost:8181/getAll/sym_name";
+        $("#table_details").hide();
+        var methodURL = "getAll/sym_name";
         var temp = $("#sym_name2").val();
         console.log(temp);
-        console.log(JSON.stringify(temp));
         $.ajax({
-           type : "POST",
+           type : "GET",
            contentType : "application/json",
            url : methodURL,
-           data : JSON.stringify(temp),
-           dataType : 'json',
+           data : "sym_name=" + $("#sym_name2").val(),
            success : function(data) {
-            console.log("HI aa gaya");
+            console.log("Success");
             console.log(data);
            },
            error : function(e) {
-           console.log("Kuch error" );
+           console.log("Err...");
            console.log(e);
            }
         });
+        $("#sym_name2").val("");
+        $("#table_details").hide();
+    }
+
+    function deleteStock(){
+        $("#table_details").hide();
+        var methodURL = "remove/sym_name";
+        var temp = $("#sym_name3").val();
+        console.log(temp);
+        $.ajax({
+           type : "GET",
+           contentType : "application/json",
+           url : methodURL,
+           data : "sym_name=" + $("#sym_name3").val(),
+           success : function(data) {
+            console.log("Del Success");
+            console.log(data);
+           },
+           error : function(e) {
+           console.log("Del Err...");
+           console.log(e);
+           }
+        });
+        $("#sym_name3").val("");
+        $("#table_details").hide();
     }
 
     function getLatest(){
-        var methodURL = "http://localhost:8181/getLatest";
+        var methodURL = "getLatest";
+        $("#topviewedtable").children().remove();
         $.ajax({
-           type : "POST",
+           type : "GET",
            contentType : "application/json",
            url : methodURL,
            success : function(data) {
-            console.log("HI aa gaya");
+            var tabdata = JSON.parse(JSON.stringify(data));
+            console.log(tabdata);
+            $("#table_details").show();
+            var tableId = document.getElementById("topviewedtable");
+                $(function() {
+                    $.each(tabdata, function(i, item) {
+                        var $tr = $('<tr>').append(
+                            $('<td>').text(i+1),
+                            $('<td>').text(item.name),
+                            $('<td>').text(item.symbol),
+                            $('<td>').text(item.price),
+                            $('<td>').text(item.time)
+                        ).appendTo(tableId);
+
+                    });
+		        });
+           console.log("GetALL Success....");
            },
            error : function(e) {
-           console.log("Kuch error" );
+           console.log("GetALL Err.....");
            console.log(e);
            }
         });
     }
 </script>
 
-<body ng-app="Monitoring">
-<div ng-controller="myController">
-    <div id="page">
-        <div id="info" align="center">
-            <h1>Stock Price Monitoring System</h1>
-            <p>Hey there ......</p>
-        </div>
-        <div id="symList">
-            <a href="http://finance.yahoo.com/lookup?bypass=true" target="_blank">Click Me to get symbol details!</a><br><br>
-        </div>
-        <div id="addCompany">
-            <h2>Enter the company symbol to add data</h2>
-            <form name="myform" method="POST" action="addComp/sym_name" >
-                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook" name = "sym_name" id = "sym_name"/><br>
-                <br><br>
-                <input type=button value="Add" onclick="start()"/> <br><br>
-            </form>
+<body>
+    <div id="myController">
+        <div id="page">
+            <div id="info" align="center">
+                <h1>Stock Price Monitoring System</h1>
+                <p>Using Yahoo Finance API</p>
+            </div>
 
-        </div>
-        <div id="getHistoricalStock">
-            <h2>Enter the company symbol to get historical data</h2>
-            <form name="myform1" method="POST" action="getAll/sym_name" >
-                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name" id="sym_name2"/><br>
-                <br><br>
-                <input type=button value="Get Historical" onclick="getHist()"/> <br><br>
-            </form>
-        </div>
-        <div id="getLatestStock">
-            <h2>Click to get the tabular data of latest stocks</h2>
-            <form name="myform4" method="GET" action="getLatest" >
-                <br>
-                <input type=button value="Get Latest" onclick="getLatest()"/> <br><br>
-            </form>
-        </div>
-        <div id="deleteStock">
-            <h2>Enter the company symbol to delete historical data</h2>
-            <form name="myform2" method="get" action="remove/sym_name" >
-                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name"/><br>
-                <br><br>
-                <input type=submit value="Delete Data"/> <br><br>
-            </form>
+            <div id="symList">
+                <a href="http://finance.yahoo.com/lookup?bypass=true" target="_blank">Click Me to get symbol details!</a><br><br>
+            </div>
 
+            <div id="addCompany">
+                <h2>Enter the company symbol to add data</h2>
+                <form name="myform" method="POST" action="addComp/sym_name" >
+                    Symbol Name : <input type="text" placeholder="symbol.. FB for facebook" name = "sym_name" id = "sym_name"/><br>
+                    <br><br>
+                    <input type=button value="Add" onclick="start()"/> <br><br>
+                </form>
+            </div>
+
+            <div id="getHistoricalStock">
+                <h2>Enter the company symbol to get historical data</h2>
+                <form name="myform1" method="GET" action="getAll/sym_name" >
+                    Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name2" id="sym_name2"/><br>
+                    <br><br>
+                    <input type=button value="Get Historical" onclick="getHist()"/> <br><br>
+                </form>
+            </div>
+
+            <div id="getLatestStock">
+                <h2>Click to get the tabular data of latest stocks</h2>
+                <form name="myform4" method="GET" action="getLatest" >
+                    <br>
+                    <input type=button value="Get Latest" onclick="getLatest()"/> <br><br>
+                </form>
+
+            </div>
+
+            <div id="deleteStock">
+                <h2>Enter the company symbol to delete historical data</h2>
+                <form name="myform2" method="POST" action="remove/sym_name" >
+                    Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name3" id="sym_name3"/><br>
+                    <br><br>
+                    <input type=button value="Delete Data" onclick="deleteStock()"/> <br><br>
+                </form>
+
+
+            </div>
+        </div>
+        <div class="table" align="center">
+            <div id="table_details" style="display:none">
+                <h3 style="color:red; font-family:verdana">Latest Stock Prices</h3>
+                <table class = "table" id="stockList">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Company Name</th>
+                            <th>Symbol Value</th>
+                            <th>Price</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topviewedtable">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>
