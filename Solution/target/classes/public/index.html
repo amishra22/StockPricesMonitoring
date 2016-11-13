@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Stock Price Monitoring</title>
+</head>
+<script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    function start(){
+        var methodURL = "http://localhost:8181/addComp/sym_name";
+        var temp = $("#sym_name").val();
+        console.log(temp);
+        console.log(JSON.stringify(temp));
+        $.ajax({
+           type : "POST",
+           contentType : "application/json",
+           url : methodURL,
+           data : JSON.stringify(temp),
+           dataType : 'json',
+           success : function() {
+            console.log("HI aa gaya");
+
+           },
+           error : function() {
+           console.log("Kuch error" );
+
+           }
+        });
+    }
+
+    function getHist(){
+        var methodURL = "http://localhost:8181/getAll/sym_name";
+        var temp = $("#sym_name2").val();
+        console.log(temp);
+        console.log(JSON.stringify(temp));
+        $.ajax({
+           type : "POST",
+           contentType : "application/json",
+           url : methodURL,
+           data : JSON.stringify(temp),
+           dataType : 'json',
+           success : function(data) {
+            console.log("HI aa gaya");
+            console.log(data);
+           },
+           error : function(e) {
+           console.log("Kuch error" );
+           console.log(e);
+           }
+        });
+    }
+
+    function getLatest(){
+        var methodURL = "http://localhost:8181/getLatest";
+        $.ajax({
+           type : "POST",
+           contentType : "application/json",
+           url : methodURL,
+           success : function() {
+            console.log("HI aa gaya");
+           },
+           error : function(e) {
+           console.log("Kuch error" );
+           console.log(e);
+           }
+        });
+    }
+</script>
+
+<body ng-app="Monitoring">
+<div ng-controller="myController">
+    <div id="page">
+        <div id="info" align="center">
+            <h1>Stock Price Monitoring System</h1>
+            <p>Hey there ......</p>
+        </div>
+        <div id="symList">
+            <a href="http://finance.yahoo.com/lookup?bypass=true" target="_blank">Click Me to get symbol details!</a><br><br>
+        </div>
+        <div id="addCompany">
+            <h2>Enter the company symbol to add data</h2>
+            <form name="myform" method="POST" action="addComp/sym_name" >
+                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook" name = "sym_name" id = "sym_name"/><br>
+                <br><br>
+                <input type=button value="Add" onclick="start()"/> <br><br>
+            </form>
+
+        </div>
+        <div id="getHistoricalStock">
+            <h2>Enter the company symbol to get historical data</h2>
+            <form name="myform1" method="POST" action="getAll/sym_name" >
+                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name" id="sym_name2"/><br>
+                <br><br>
+                <input type=button value="Get Historical" onclick="getHist()"/> <br><br>
+            </form>
+        </div>
+        <div id="getLatestStock">
+            <h2>Click to get the tabular data of latest stocks</h2>
+            <form name="myform4" method="GET" action="getLatest" >
+                <br>
+                <input type=button value="Get Latest" onclick="getLatest()"/> <br><br>
+            </form>
+        </div>
+        <div id="deleteStock">
+            <h2>Enter the company symbol to delete historical data</h2>
+            <form name="myform2" method="get" action="remove/sym_name" >
+                Symbol Name : <input type="text" placeholder="symbol.. FB for facebook etc" name = "sym_name"/><br>
+                <br><br>
+                <input type=submit value="Delete Data"/> <br><br>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
