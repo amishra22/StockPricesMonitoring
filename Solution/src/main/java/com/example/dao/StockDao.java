@@ -3,6 +3,7 @@ package com.example.dao;
 import com.example.model.MyStock;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,5 +16,6 @@ public interface StockDao {
 
     void addCompStock(MyStock myStock);
 
-    Map<String,Double> getHistoricalData(String symbol);
+    List<MyStock> getHistoricalData(String symbol);
+
 }

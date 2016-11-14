@@ -8,6 +8,10 @@ public class MyStock {
     String timeStamp;
     String name;
 
+    public MyStock() {
+
+    }
+
     public String getTimeStamp() {
         return timeStamp;
     }
@@ -24,9 +28,6 @@ public class MyStock {
         this.name = name;
     }
 
-    public MyStock() {
-
-    }
     public String getSymbol() {
         return symbol;
     }
@@ -39,13 +40,5 @@ public class MyStock {
     public void setPrice(double price) {
         this.price = price;
     }
-    public String  getTime() {
-        return timeStamp;
-    }
-    public void setTime(String ts) {
-        this.timeStamp = ts;
-    }
-
-
 
 }

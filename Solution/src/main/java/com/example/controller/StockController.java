@@ -2,9 +2,14 @@ package com.example.controller;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.model.MyStock;
@@ -13,6 +18,8 @@ import javax.ws.rs.Produces;
 
 @RestController
 @RequestMapping("/")
+@EnableScheduling
+@Component
 public class StockController {
 
     @Autowired
@@ -42,6 +49,13 @@ public class StockController {
         return null;
     }
 */
+/*
+    @Scheduled(fixedRate = 300000)
+    public void updateEveryFiveMin(){
+        System.out.println("Calling next Update after 5 min starting -> " + new Date());
+        stockService.updateEveryFiveMin();
+    }*/
+
     @RequestMapping(value = "addComp/sym_name", method = RequestMethod.POST)
     public void addCompStock(@RequestBody String symbol){
         try {
@@ -58,7 +72,7 @@ public class StockController {
 
     @RequestMapping(value = "/getAll/sym_name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Produces("application/json")
-    public Map<String,Double> getHistoricalData(@RequestParam(value = "sym_name") String symbol) {
+    public List<MyStock> getHistoricalData(@RequestParam(value = "sym_name") String symbol) {
         return stockService.getHistoricalData(symbol);
     }
 

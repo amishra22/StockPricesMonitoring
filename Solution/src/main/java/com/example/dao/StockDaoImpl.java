@@ -1,9 +1,5 @@
 package com.example.dao;
 
-import java.security.Timestamp;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +30,11 @@ public class StockDaoImpl implements StockDao {
             MyStock myStock = new MyStock();
             myStock.setSymbol(rs.getString("symbol"));
             myStock.setPrice(rs.getDouble("stock_value"));
-            myStock.setTime(rs.getString("time_val"));
+            myStock.setTimeStamp(rs.getString("time_val"));
             myStock.setName(rs.getString("comp_name"));
             listOfStocks.add(myStock);
         }
-        //System.out.println("getLatest");
         return listOfStocks;
-        //return myStock;
     }
 
     @Override
@@ -58,7 +52,7 @@ public class StockDaoImpl implements StockDao {
         // TODO Add
         String symbol = myStock.getSymbol();
         double price = myStock.getPrice();
-        String ts = myStock.getTime();
+        String ts = myStock.getTimeStamp();
         String compName = myStock.getName();
         String delQuery = "DELETE FROM real_time_stock_info WHERE symbol=" + "\'" + symbol + "\'";
         jdbc.execute(delQuery);
@@ -68,25 +62,34 @@ public class StockDaoImpl implements StockDao {
                 "," +price + "," + "\'" + ts + "\'" +")";
         jdbc.execute(insertQueryReal);
         jdbc.execute(insertQueryAll);
-        //System.out.println("Added successfully");
     }
 
     @Override
-    public Map<String, Double> getHistoricalData(String symbol) {
+    public List<MyStock> getHistoricalData(String symbol) {
         Map<String, Double> map = new TreeMap<String,Double>();
+        Set<String> newSet = new HashSet<>();
+        List<MyStock> stocks = new ArrayList<>();
         String query = "SELECT * from all_time_stock_info WHERE symbol=" + "\'" + symbol + "\'";
         SqlRowSet rs = jdbc.queryForRowSet(query);
         while(rs.next()){
-            String time = rs.getString("time_val");
-            Double price = rs.getDouble("stock_value");
-            if(!map.containsKey(time)) {
-                map.put(time,price);
+            if(!newSet.contains(rs.getString("time_val"))) {
+                MyStock myStock = new MyStock();
+                myStock.setSymbol(rs.getString("symbol"));
+                myStock.setPrice(rs.getDouble("stock_value"));
+                myStock.setTimeStamp(rs.getString("time_val"));
+                myStock.setName(rs.getString("comp_name"));
+                newSet.add(rs.getString("time_val"));
+                stocks.add(myStock);
             }
+
         }
-        for(Map.Entry<String,Double> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
-        //System.out.println("getHist");
-        return map;
+        Collections.sort(stocks, new Comparator<MyStock>() {
+            @Override
+            public int compare(MyStock o1, MyStock o2) {
+                return o1.getTimeStamp().compareTo(o2.getTimeStamp());
+            }
+        });
+
+        return stocks;
     }
 }
