@@ -33,4 +33,29 @@ public class StockControllerTest {
     public void testDeleteStock() throws Exception {
 
     }
+
+    @Test
+    public void testUpdateEveryFiveMin1() throws Exception {
+
+    }
+
+    @Test
+    public void testAddCompStock1() throws Exception {
+
+    }
+
+    @Test
+    public void testGetLatestStockPrices1() throws Exception {
+
+    }
+
+    @Test
+    public void testGetHistoricalData1() throws Exception {
+
+    }
+
+    @Test
+    public void testDeleteStock1() throws Exception {
+
+    }
 }

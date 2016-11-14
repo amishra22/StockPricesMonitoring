@@ -1,0 +1,4 @@
+com\example\dao\StockDaoImplTest.class
+com\example\model\MyStockTest.class
+com\example\service\StockServiceTest.class
+com\example\controller\StockControllerTest.class

@@ -21,8 +21,6 @@ public class StockDaoImpl implements StockDao {
 
     @Override
     public Collection<MyStock> getLatestStockPrices() {
-        // TODO Auto-generated method stub
-
         List<MyStock> listOfStocks = new ArrayList<MyStock>();
         String query = "SELECT * from real_time_stock_info";
         SqlRowSet rs = jdbc.queryForRowSet(query);
@@ -49,7 +47,6 @@ public class StockDaoImpl implements StockDao {
 
     @Override
     public void addCompStock(MyStock myStock) {
-        // TODO Add
         String symbol = myStock.getSymbol();
         double price = myStock.getPrice();
         String ts = myStock.getTimeStamp();

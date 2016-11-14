@@ -30,12 +30,16 @@ public class StockService {
     }
 
     public void addCompStock(String symbol) throws IOException {
-        if(symbol == null || symbol.length() < 1) {
+        if(symbol == null || symbol.length() <= 2) {
             return;
         }
-        //System.out.println("String is " + symbol);
         symbol = symbol.substring(1, symbol.length() - 1);
-        Stock stock = YahooFinance.get(symbol);
+        Stock stock = null;
+        try {
+            stock = YahooFinance.get(symbol);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(stock!= null) {
             java.util.Date date = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-M-dd-hh-mm-ss");
